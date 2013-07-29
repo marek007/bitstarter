@@ -26,7 +26,7 @@ var program = require('commander');
 var cheerio = require('cheerio');
 var rest = require('restler');
 
-var HTMLFILE_DEFAULT = "index.html";
+var HTMLFILE_DEFAULT = "";
 var URL_DEFAULT = "";
 var CHECKSFILE_DEFAULT = "checks.json";
 var rst =  "";
@@ -34,7 +34,7 @@ var rst =  "";
 var assertFileExists = function(infile) {
     var instr = infile.toString();
     if(!fs.existsSync(instr)) {
-	console.log("%s does not exist. Exiting.", instr);
+	console.log("File <%s> does not exist. Exiting.", instr);
 	process.exit(1); 
     }
     return instr;
@@ -44,7 +44,7 @@ var assertUrlExists = function(inurl) {
     var instr = inurl.toString();
     rest.get(inurl).on('complete', function(result) {
 	if (result instanceof Error) {
-	   console.log('Error in URL '+instr+" >>> " + result.message);
+	   console.log('Error in URL < '+instr+" >: " + result.message);
 	   process.exit(3);
         };
     });
@@ -85,6 +85,9 @@ var checkHtmlFile = function(htmlfile, checksfile,url) {
     if (url.length > 0) {
 	loadUrlFile(html_file,checksfile);
     } else {
+	if (htmlfile.length == 0){
+	    htmlfile = "index.html";
+	}
         assertFileExists(htmlfile )
 	checks_out(fs.readFileSync(htmlfile),checksfile);
    }
